@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour {
     public float speed = 15.0f;
     public float padding = 0.5f;
     public float projectileSpeed = 1f;
+    public float firingRate = 1f;
     float xmin = -5;
     float xmax = 5;
     float ymin = -5;
@@ -23,9 +24,13 @@ public class PlayerController : MonoBehaviour {
 	void Update () {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            GameObject beam = Instantiate(projectile, transform.position, Quaternion.identity) as GameObject;
-            beam.GetComponent<Rigidbody2D>().velocity = new Vector3(0, projectileSpeed, 0f);
+            InvokeRepeating("FireProjectile", 0.000001f, firingRate);
         }
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            CancelInvoke("FireProjectile");
+        }
+
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             transform.position += Vector3.left * speed * Time.deltaTime;
@@ -60,5 +65,11 @@ public class PlayerController : MonoBehaviour {
         xmax = rightMost.x - padding;
         ymin = downMost.y + padding;
         ymax = upMost.y - padding;
+    }
+
+    void FireProjectile()
+    {
+        GameObject beam = Instantiate(projectile, transform.position, Quaternion.identity) as GameObject;
+        beam.GetComponent<Rigidbody2D>().velocity = new Vector3(0, projectileSpeed, 0f);
     }
 }
